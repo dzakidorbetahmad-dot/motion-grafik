@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111111">
+<title>QRSAJI — Motion Reel 2026</title>
+<style>
+:root {
+  --cream: #f5e6c8;
+  --paper: #f7f4eb;
+  --green: #183a32;
+  --orange: #e87a3e;
+  --ink: #111111;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #111; color: #fff; }
+body {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 16px; padding: 18px;
+  font-family: Inter, "Plus Jakarta Sans", Arial, sans-serif;
+}
+.stage-shell {
+  position: relative; width: min(96vw, calc(82vh * 16 / 9)); aspect-ratio: 16 / 9;
+  overflow: hidden; background: var(--paper); box-shadow: 0 24px 90px #0009;
+}
+#stage {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  overflow: hidden; transform-origin: top left; color: var(--ink);
+  background: var(--paper); isolation: isolate;
+}
+#spark-canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 1; }
+.scene { position: absolute; inset: 0; z-index: 2; opacity: 0; visibility: hidden; transition: opacity .34s var(--ease), visibility .34s; }
+.scene.active { opacity: 1; visibility: visible; }
+.reveal {
+  opacity: 0; transform: translate3d(0, 28px, 0) scale(.98);
+  transition: opacity .55s var(--ease), transform .72s var(--ease);
+  will-change: transform, opacity;
+}
+.reveal.is-visible { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+h1, h2, p { margin: 0; }
+.eyebrow { color: var(--green); font: 700 21px/1.2 Consolas, "Courier New", monospace; letter-spacing: .14em; }
+.display { font-size: 98px; line-height: .98; letter-spacing: -.065em; font-weight: 850; color: var(--green); }
+.serif { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; letter-spacing: -.055em; }
+
+/* 02 — problem */
+#scene-problem .problem-title {
+  position: absolute; left: 0; right: 0; top: 408px; text-align: center;
+  font-size: 156px; line-height: 1; color: var(--green);
+}
+.problem-pill {
+  position: absolute; padding: 23px 32px; border: 1px solid #183a3230; border-radius: 99px;
+  background: #fff; color: var(--ink); font-size: 29px; font-weight: 650;
+  box-shadow: 0 14px 36px #183a3210;
+}
+#problem-a { left: 112px; top: 245px; }
+#problem-b { right: 108px; top: 300px; }
+#problem-c { left: 130px; bottom: 202px; }
+#problem-d { right: 120px; bottom: 195px; }
+#scene-problem .claim {
+  position: absolute; left: 250px; right: 250px; top: 340px; text-align: center;
+  font-size: 83px; line-height: 1.1; letter-spacing: -.055em; font-weight: 820; color: var(--green);
+}
+.highlight { display: inline-block; position: relative; isolation: isolate; white-space: nowrap; }
+.highlight::before {
+  content: ""; position: absolute; z-index: -1; left: -.08em; right: -.08em; top: .54em; bottom: .02em;
+  background: var(--orange); transform: rotate(-1.4deg); border-radius: 7px;
+}
+
+/* 03 — formula */
+#scene-formula .formula-title { position: absolute; top: 206px; width: 100%; text-align: center; font-size: 78px; }
+.formula-row { position: absolute; left: 230px; right: 230px; top: 365px; display: flex; gap: 26px; justify-content: center; }
+.formula-card {
+  width: 440px; height: 330px; border-radius: 24px; padding: 34px 35px;
+  background: #fff; color: var(--green); box-shadow: 0 24px 58px #183a3213;
+  border: 1px solid #183a3210; position: relative; overflow: hidden;
+}
+.formula-card::after { content: ""; position: absolute; height: 8px; left: 0; right: 0; bottom: 0; background: var(--orange); transform: scaleX(.12); transform-origin: left; transition: transform .9s var(--ease); }
+.formula-card.is-visible::after { transform: scaleX(1); }
+.card-num { font: 700 21px Consolas, monospace; opacity: .55; }
+.card-label { margin-top: 30px; font: 700 19px Consolas, monospace; letter-spacing: .12em; }
+.card-value { margin-top: 13px; font-size: 66px; line-height: 1.05; letter-spacing: -.055em; font-weight: 850; }
+.card-note { margin-top: 12px; color: #183a32a6; font: 20px/1.35 Georgia, serif; font-style: italic; }
+.price-pill {
+  position: absolute; left: 50%; top: 790px; transform: translateX(-50%) translateY(26px) scale(.98);
+  padding: 19px 34px; border-radius: 99px; background: var(--green); color: var(--paper);
+  font: 700 19px Consolas, monospace; letter-spacing: .055em;
+  opacity: 0; transition: opacity .5s var(--ease), transform .65s var(--ease);
+}
+.price-pill.is-visible { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+
+/* 04 — service grid */
+#scene-services .services-title { position: absolute; top: 184px; width: 100%; text-align: center; font-size: 78px; }
+.bento {
+  position: absolute; left: 192px; top: 320px; width: 1536px; height: 520px;
+  display: grid; grid-template-columns: 620px 1fr; gap: 24px;
+}
+.hero-card {
+  background: var(--green); color: var(--paper); border-radius: 28px; padding: 39px;
+  position: relative; overflow: hidden; box-shadow: 0 24px 60px #183a3222;
+}
+.hero-card h2 { font-size: 50px; letter-spacing: -.055em; line-height: 1; max-width: 500px; }
+.hero-card p { margin-top: 18px; max-width: 450px; font-size: 22px; line-height: 1.4; color: #f7f4ebc9; }
+.hero-card .micro { margin-top: 34px; color: #f7f4eb88; font: 16px Consolas, monospace; letter-spacing: .11em; }
+.phone {
+  position: absolute; width: 235px; height: 280px; bottom: 24px; right: 28px;
+  background: #f7f4eb; border: 9px solid #101c19; border-radius: 28px; padding: 21px 14px 14px;
+  color: var(--green); box-shadow: 0 12px 24px #0004; transform: rotate(3deg);
+}
+.phone::before { content: ""; position: absolute; top: 7px; left: 50%; width: 42px; height: 5px; border-radius: 10px; background: #183a3255; transform: translateX(-50%); }
+.phone-tag { color: var(--orange); font: 700 10px Consolas, monospace; letter-spacing: .1em; }
+.phone h3 { font-size: 18px; margin: 7px 0 12px; }
+.food-line { display: flex; justify-content: space-between; gap: 6px; border-top: 1px solid #183a3220; padding: 9px 0; font-size: 11px; line-height: 1.2; font-weight: 700; }
+.food-line span:last-child { white-space: nowrap; color: var(--orange); }
+.small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; }
+.small-card {
+  background: #fff; border-radius: 22px; padding: 28px 30px; color: var(--green);
+  box-shadow: 0 18px 44px #183a3210; border: 1px solid #183a320d;
+}
+.small-card .index { color: var(--orange); font: 700 18px Consolas, monospace; }
+.small-card h3 { margin-top: 17px; font-size: 31px; letter-spacing: -.045em; }
+.small-card p { margin-top: 8px; font: 20px/1.3 Georgia, serif; color: #183a32a8; font-style: italic; }
+
+/* 05 — brand close */
+#scene-brand { background: var(--paper); }
+.brand-lockup { position: absolute; top: 208px; left: 0; right: 0; text-align: center; }
+.brand-icon { display: block; width: 180px; height: 158px; margin: 0 auto 8px; overflow: visible; }
+.brand-name { font-size: 150px; color: var(--green); line-height: .9; font-weight: 900; letter-spacing: -.09em; }
+.brand-name span { color: var(--orange); }
+.tagline { margin-top: 22px; font: italic 46px Georgia, "Times New Roman", serif; color: var(--green); }
+.cta {
+  position: absolute; top: 690px; left: 50%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 18px; padding: 23px 36px; border-radius: 99px;
+  background: var(--orange); color: var(--ink); font-size: 24px; font-weight: 800; white-space: nowrap;
+  box-shadow: 0 12px 0 #c95f2d; transition: top .65s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease);
+}
+.cta.focus { top: 738px; box-shadow: 0 6px 0 #c95f2d; transform: translateX(-50%) scale(1.04); }
+.journey { position: absolute; left: 210px; right: 210px; top: 850px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.journey-step {
+  display: flex; align-items: center; gap: 13px; min-width: 300px; padding: 18px 22px;
+  border: 1px solid #183a3224; border-radius: 18px; background: #fff; color: var(--green);
+  opacity: 0; transform: translateY(22px) scale(.96); transition: opacity .4s var(--ease), transform .55s var(--ease), background .25s, color .25s, border-color .25s;
+}
+.journey-step.is-visible { opacity: .6; transform: translateY(0) scale(1); }
+.journey-step.current { opacity: 1; color: #fff; background: var(--green); border-color: var(--green); }
+.step-no { font: 700 16px Consolas, monospace; color: var(--orange); }
+.step-label { font: 700 17px Consolas, monospace; letter-spacing: .025em; white-space: nowrap; }
+.journey-arrow { color: var(--orange); font: 30px Consolas, monospace; opacity: .7; }
+.final-price { position: absolute; top: 858px; left: 50%; transform: translateX(-50%) translateY(18px); opacity: 0; color: var(--green); font: 700 18px Consolas, monospace; letter-spacing: .1em; transition: opacity .45s var(--ease), transform .55s var(--ease); }
+.final-price.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Fixed viewfinder overlay */
+.hud { position: absolute; z-index: 20; color: var(--green); font: 700 16px/1 Consolas, "Courier New", monospace; letter-spacing: .08em; }
+#hud-tl { top: 38px; left: 48px; }
+#hud-tr { top: 38px; right: 48px; text-align: right; }
+#hud-bl { bottom: 39px; left: 48px; }
+#hud-br { bottom: 39px; right: 48px; text-align: right; }
+#scene-name { color: var(--orange); }
+.corner { position: absolute; z-index: 18; width: 33px; height: 33px; border-color: var(--green); opacity: .7; }
+.c-tl { left: 22px; top: 22px; border-left: 2px solid; border-top: 2px solid; }
+.c-tr { right: 22px; top: 22px; border-right: 2px solid; border-top: 2px solid; }
+.c-bl { left: 22px; bottom: 22px; border-left: 2px solid; border-bottom: 2px solid; }
+.c-br { right: 22px; bottom: 22px; border-right: 2px solid; border-bottom: 2px solid; }
+#progress-track { position: absolute; z-index: 21; bottom: 0; left: 0; right: 0; height: 5px; background: #183a3216; }
+#progress-bar { height: 100%; width: 0; background: var(--orange); transform-origin: left; }
+.grain {
+  pointer-events: none; position: absolute; z-index: 16; inset: -50%; width: 200%; height: 200%; opacity: .075;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
+  animation: grain-shift .24s steps(2) infinite;
+}
+@keyframes grain-shift { 0% { transform: translate(0,0); } 25% { transform: translate(2%,-1%); } 50% { transform: translate(-2%,2%); } 75% { transform: translate(1%,2%); } }
+
+.controls { width: min(96vw, 1100px); display: flex; align-items: center; justify-content: center; gap: 10px; }
+.controls button {
+  border: 1px solid #ffffff26; background: #232323; color: #f7f4eb; border-radius: 999px;
+  padding: 12px 19px; font: 650 14px Inter, Arial, sans-serif; cursor: pointer; transition: background .2s, transform .2s;
+}
+.controls button:hover { background: #333; transform: translateY(-1px); }
+.controls button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+#play-button { min-width: 116px; background: var(--orange); border-color: var(--orange); color: #111; font-weight: 800; }
+#play-button:hover { background: #f28b50; }
+.control-note { color: #bdbdbd; margin-left: 10px; font: 12px Consolas, monospace; }
+@media (max-height: 560px) {
+  body { padding: 6px; gap: 6px; }
+  .stage-shell { width: min(95vw, calc(81vh * 16 / 9)); }
+  .controls { gap: 6px; }
+  .controls button { padding: 8px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="stage-shell" id="stage-shell" aria-label="QRSAJI motion reel, 30 detik">
+  <main id="stage">
+    <canvas id="spark-canvas" width="1920" height="1080" aria-hidden="true"></canvas>
+
+    <section id="scene-problem" class="scene" aria-label="Masalah menu cetak">
+      <h1 id="problem-title" class="problem-title serif reveal">Menu Cetak</h1>
+      <div id="problem-a" class="problem-pill reveal">Biaya cetak ulang mahal</div>
+      <div id="problem-b" class="problem-pill reveal">Ganti harga ribet</div>
+      <div id="problem-c" class="problem-pill reveal">Menu cepat rusak</div>
+      <div id="problem-d" class="problem-pill reveal">Antre pesan lama</div>
+      <p id="problem-claim" class="claim reveal">Ubah cara pelanggan memesan,<br><span class="highlight">tanpa ribet</span> cetak ulang.</p>
+    </section>
+
+    <section id="scene-formula" class="scene" aria-label="Harga dan cara kerja">
+      <h1 id="formula-title" class="formula-title display reveal">Menu digital praktis,<br>harga hemat.</h1>
+      <div class="formula-row">
+        <article class="formula-card reveal" id="formula-1">
+          <div class="card-num">01 / 03</div><div class="card-label">SETUP MENU</div>
+          <div class="card-value" id="counter-price">Rp 0rb</div><div class="card-note">sekali bayar</div>
+        </article>
+        <article class="formula-card reveal" id="formula-2">
+          <div class="card-num">02 / 03</div><div class="card-label">APLIKASI</div>
+          <div class="card-value">0 App</div><div class="card-note">langsung scan kamera</div>
+        </article>
+        <article class="formula-card reveal" id="formula-3">
+          <div class="card-num">03 / 03</div><div class="card-label">UPDATE MENU</div>
+          <div class="card-value" id="counter-update">00/7</div><div class="card-note">praktis via tim QRSAJI</div>
+        </article>
+      </div>
+      <div class="price-pill reveal" id="formula-pill">SOLUSI UMKM KULINER&nbsp; • &nbsp;MULAI RP 50.000</div>
+    </section>
+
+    <section id="scene-services" class="scene" aria-label="Layanan QRSAJI">
+      <h1 id="services-title" class="services-title display reveal">Semua kebutuhan menu, satu QR.</h1>
+      <div class="bento">
+        <article id="hero-card" class="hero-card reveal">
+          <h2>QR Menu Digital</h2>
+          <p>Scan, lihat foto &amp; harga, lalu pesan langsung via WhatsApp usaha.</p>
+          <div class="micro">DIBUAT &amp; DIKELOLA TIM QRSAJI</div>
+          <div class="phone" aria-label="Contoh tampilan menu digital">
+            <div class="phone-tag">MENU HARI INI</div><h3>Kedai Saji</h3>
+            <div class="food-line"><span>Nasi Ayam<br>Spesial</span><span>Rp25.000</span></div>
+            <div class="food-line"><span>Es Kopi<br>Susu</span><span>Rp18.000</span></div>
+          </div>
+        </article>
+        <div class="small-grid">
+          <article id="service-1" class="small-card reveal"><div class="index">01</div><h3>Tanpa Aplikasi</h3><p>Cukup kamera HP</p></article>
+          <article id="service-2" class="small-card reveal"><div class="index">02</div><h3>QR Fleksibel</h3><p>Meja, etalase, kemasan</p></article>
+          <article id="service-3" class="small-card reveal"><div class="index">03</div><h3>Update Mudah</h3><p>Ganti harga tanpa cetak</p></article>
+          <article id="service-4" class="small-card reveal"><div class="index">04</div><h3>Target Mitra</h3><p>Warung, kafe &amp; kantin</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="scene-brand" class="scene" aria-label="QRSAJI, scan, lihat, pilih, pesan">
+      <div class="brand-lockup">
+        <svg class="brand-icon reveal" id="brand-icon" viewBox="0 0 180 158" role="img" aria-label="Ikon mangkuk hangat QRSAJI">
+          <path d="M64 29c-13-13 10-17 0-29M91 29c-13-13 10-17 0-29M118 29c-13-13 10-17 0-29" fill="none" stroke="#183A32" stroke-width="7" stroke-linecap="round"/>
+          <path d="M28 64h124c-4 43-25 66-62 66S32 107 28 64Z" fill="#E87A3E"/>
+          <path d="M20 62c0-8 6-14 14-14h102c8 0 14 6 14 14v5H20v-5Z" fill="#183A32"/>
+          <path d="M72 85 90 72l18 13-18 14-18-14Z" fill="#F7F4EB"/>
+          <path d="M90 72v27M72 85h36" fill="none" stroke="#183A32" stroke-width="3"/>
+          <path d="M49 137h82" stroke="#183A32" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-name reveal" id="brand-name">QR<span>SAJI</span></div>
+        <div class="tagline reveal" id="brand-tagline">scan, lihat, pilih, pesan</div>
+      </div>
+      <div class="cta reveal" id="brand-cta">Konsultasi &amp; Buat Menu Sekarang <span aria-hidden="true">→</span></div>
+      <div class="journey" id="journey">
+        <div id="step-1" class="journey-step"><span class="step-no">01</span><span class="step-label">SCAN QR</span></div>
+        <span class="journey-arrow" aria-hidden="true">→</span>
+        <div id="step-2" class="journey-step"><span class="step-no">02</span><span class="step-label">LIHAT MENU</span></div>
+        <span class="journey-arrow" aria-hidden="true">→</span>
+        <div id="step-3" class="journey-step"><span class="step-no">03</span><span class="step-label">PILIH</span></div>
+        <span class="journey-arrow" aria-hidden="true">→</span>
+        <div id="step-4" class="journey-step"><span class="step-no">04</span><span class="step-label">PESAN WA</span></div>
+      </div>
+      <div id="final-price" class="final-price">MENU DIGITAL UMKM • MULAI RP 50.000</div>
+    </section>
+
+    <div class="corner c-tl"></div><div class="corner c-tr"></div><div class="corner c-bl"></div><div class="corner c-br"></div>
+    <div id="hud-tl" class="hud">QRSAJI // MOTION REEL '26</div>
+    <div id="hud-tr" class="hud">● REC 00:00:00:00</div>
+    <div id="hud-bl" class="hud"><span id="scene-name">01 - SPARK</span></div>
+    <div id="hud-br" class="hud">1920 x 1080&nbsp;&nbsp; 60 FPS</div>
+    <div id="progress-track"><div id="progress-bar"></div></div>
+    <div class="grain" aria-hidden="true"></div>
+  </main>
+</div>
+<nav class="controls" aria-label="Kontrol animasi">
+  <button id="play-button" type="button">Pause</button>
+  <button id="replay-button" type="button">Replay</button>
+  <button id="fullscreen-button" type="button">Layar penuh</button>
+  <span class="control-note">30s&nbsp; / &nbsp;1920 × 1080&nbsp; / &nbsp;60 FPS</span>
+</nav>
+<script>
+(() => {
+  "use strict";
+  const DURATION = 30;
+  const FPS = 60;
+  const stage = document.getElementById("stage");
+  const shell = document.getElementById("stage-shell");
+  const canvas = document.getElementById("spark-canvas");
+  const ctx = canvas.getContext("2d");
+  const playButton = document.getElementById("play-button");
+  const replayButton = document.getElementById("replay-button");
+  const fullButton = document.getElementById("fullscreen-button");
+  const hudTime = document.getElementById("hud-tr");
+  const sceneName = document.getElementById("scene-name");
+  const progress = document.getElementById("progress-bar");
+  const scenes = [
+    document.getElementById("scene-problem"),
+    document.getElementById("scene-formula"),
+    document.getElementById("scene-services"),
+    document.getElementById("scene-brand")
+  ];
+  const sceneLabels = [
+    {start: 0, label: "01 - SPARK"},
+    {start: 2.5, label: "02 - MASALAH"},
+    {start: 6, label: "03 - SOLUSI"},
+    {start: 10, label: "04 - LAYANAN"},
+    {start: 14.5, label: "05 - QRSAJI"}
+  ];
+  const el = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const ease = x => { x = clamp(x); return 1 - Math.pow(1 - x, 4); };
+  const lerp = (a,b,t) => a + (b-a)*t;
+  let elapsed = 0;
+  let startedAt = 0;
+  let playing = true;
+  let lastScene = -1;
+
+  function fitStage() {
+    const rect = shell.getBoundingClientRect();
+    stage.style.transform = "scale(" + (rect.width / 1920) + "," + (rect.height / 1080) + ")";
+  }
+  function visible(id, yes) {
+    const node = typeof id === "string" ? el(id) : id;
+    if (node) node.classList.toggle("is-visible", !!yes);
+  }
+  function drawSpark(t) {
+    ctx.clearRect(0, 0, 1920, 1080);
+    if (t < 0 || t > 2.72) return;
+    const cx = 960, cy = 540, p = clamp(t / 2.5);
+    const count = 32;
+    const radius = p < .2 ? lerp(0, 350, ease(p / .2)) :
+      p < .73 ? 350 + Math.sin(t * 4.2) * 17 :
+      lerp(350, 16, ease((p - .73) / .27));
+    ctx.save();
+    for (let i = 0; i < count; i++) {
+      const a = (Math.PI * 2 * i / count) + t * (p < .73 ? .9 : .2);
+      const r = radius * (0.83 + 0.17 * Math.sin(i * 2.1));
+      const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+      const dot = 5 + 4 * (0.5 + 0.5 * Math.sin(i * 4 + t * 5));
+      ctx.beginPath(); ctx.arc(x, y, dot, 0, Math.PI * 2);
+      ctx.fillStyle = "#183a32"; ctx.fill();
+    }
+    const dotScale = p < .78 ? 1 : lerp(1, .3, ease((p - .78) / .22));
+    ctx.beginPath(); ctx.arc(cx, cy, 18 * dotScale, 0, Math.PI * 2);
+    ctx.fillStyle = "#e87a3e"; ctx.fill();
+    if (t > 2.25) {
+      const wipe = ease((t - 2.25) / .32);
+      ctx.globalAlpha = 1 - wipe;
+      ctx.beginPath(); ctx.arc(cx, cy, lerp(20, 1450, wipe), 0, Math.PI * 2);
+      ctx.fillStyle = "#e87a3e"; ctx.fill();
+    }
+    ctx.restore();
+  }
+  function setTimeline(t) {
+    let current = -1;
+    if (t >= 2.5 && t < 6) current = 0;
+    else if (t >= 6 && t < 10) current = 1;
+    else if (t >= 10 && t < 14.5) current = 2;
+    else if (t >= 14.5) current = 3;
+    if (current !== lastScene) {
+      scenes.forEach((s,i) => s.classList.toggle("active", i === current));
+      lastScene = current;
+    }
+    for (let i = sceneLabels.length - 1; i >= 0; i--) {
+      if (t >= sceneLabels[i].start) { sceneName.textContent = sceneLabels[i].label; break; }
+    }
+    const sec = Math.min(DURATION, t);
+    const whole = Math.floor(sec);
+    const frame = Math.min(FPS - 1, Math.floor((sec - whole) * FPS));
+    hudTime.textContent = "● REC 00:00:" + String(whole).padStart(2,"0") + ":" + String(frame).padStart(2,"0");
+    progress.style.width = (sec / DURATION * 100) + "%";
+
+    // Scene 02: first reveal the printed-menu pain, then replace it with the promise.
+    const problemIntro = t >= 2.5 && t < 4.25;
+    visible("problem-title", problemIntro);
+    ["problem-a","problem-b","problem-c","problem-d"].forEach((id,i) => visible(id, problemIntro && t >= 2.72 + i * .14));
+    visible("problem-claim", t >= 4.22 && t < 6.15);
+
+    // Scene 03: sequential price cards and a clear minimum-price summary.
+    visible("formula-title", t >= 6.08 && t < 10.15);
+    ["formula-1","formula-2","formula-3"].forEach((id,i) => visible(id, t >= 6.45 + i * .34 && t < 10.2));
+    visible("formula-pill", t >= 8.5 && t < 10.2);
+    const cp = ease((t - 6.5) / 1.1);
+    el("counter-price").textContent = "Rp " + Math.floor(50 * cp) + "rb";
+    el("counter-update").textContent = String(Math.floor(24 * ease((t - 7.15) / .9))).padStart(2,"0") + "/7";
+
+    // Scene 04: bento cards arrive in a calm stagger.
+    visible("services-title", t >= 10.08 && t < 14.55);
+    visible("hero-card", t >= 10.32 && t < 14.55);
+    ["service-1","service-2","service-3","service-4"].forEach((id,i) => visible(id, t >= 10.65 + i * .17 && t < 14.55));
+
+    // Scene 05: brand lockup, then a four-step customer journey, then a CTA hold.
+    visible("brand-icon", t >= 14.5);
+    visible("brand-name", t >= 14.75);
+    visible("brand-tagline", t >= 15.12);
+    visible("brand-cta", t >= 16.15);
+    const stepIds = ["step-1","step-2","step-3","step-4"];
+    const activeStep = Math.min(3, Math.floor((t - 18) / 1.5));
+    stepIds.forEach((id,i) => {
+      const shown = t >= 18 + i * 1.15 && t < 26;
+      visible(id, shown);
+      el(id).classList.toggle("current", shown && activeStep === i);
+    });
+    const journey = el("journey");
+    journey.style.opacity = t >= 18 && t < 26 ? "1" : "0";
+    journey.style.transition = "opacity .45s var(--ease)";
+    el("brand-cta").classList.toggle("focus", t >= 26);
+    visible("final-price", t >= 26);
+  }
+  function tick(now) {
+    if (!playing) return;
+    const rawTime = (now - startedAt) / 1000;
+    elapsed = Math.min(DURATION, Math.floor(rawTime * FPS) / FPS);
+    drawSpark(elapsed);
+    setTimeline(elapsed);
+    if (elapsed >= DURATION) {
+      playing = false;
+      playButton.textContent = "Play";
+      playButton.setAttribute("aria-label","Putar ulang animasi");
+      return;
+    }
+    requestAnimationFrame(tick);
+  }
+  function play() {
+    if (elapsed >= DURATION) elapsed = 0;
+    playing = true;
+    startedAt = performance.now() - elapsed * 1000;
+    playButton.textContent = "Pause";
+    playButton.setAttribute("aria-label","Jeda animasi");
+    requestAnimationFrame(tick);
+  }
+  function pause() {
+    playing = false;
+    playButton.textContent = "Play";
+    playButton.setAttribute("aria-label","Lanjutkan animasi");
+  }
+  playButton.addEventListener("click", () => playing ? pause() : play());
+  replayButton.addEventListener("click", () => {
+    pause(); elapsed = 0; lastScene = -1;
+    scenes.forEach(s => s.classList.remove("active"));
+    document.querySelectorAll(".is-visible").forEach(n => n.classList.remove("is-visible"));
+    document.querySelectorAll(".current").forEach(n => n.classList.remove("current"));
+    el("brand-cta").classList.remove("focus");
+    el("journey").style.opacity = "0";
+    setTimeline(0); drawSpark(0); play();
+  });
+  fullButton.addEventListener("click", async () => {
+    try {
+      if (!document.fullscreenElement) await shell.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch (e) { fullButton.textContent = "Layar penuh tidak tersedia"; }
+  });
+  document.addEventListener("fullscreenchange", fitStage);
+  window.addEventListener("resize", fitStage);
+  fitStage();
+  setTimeline(0);
+  requestAnimationFrame(now => { startedAt = now; tick(now); });
+})();
+</script>
+</body>
+</html>
